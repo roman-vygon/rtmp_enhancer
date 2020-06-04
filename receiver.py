@@ -1,10 +1,11 @@
-import cv2
-import threading, queue
-import time
-from twitchstream.outputvideo import TwitchBufferedOutputStream
-from tensorflow import keras
-import numpy as np
 import os
+import queue
+import threading
+
+import cv2
+import numpy as np
+from tensorflow import keras
+from twitchstream.outputvideo import TwitchBufferedOutputStream
 
 output_dir = 'frames'
 q = queue.Queue()
@@ -14,12 +15,12 @@ inputs = keras.Input((None, None, 3))
 output = model(inputs)
 model = keras.models.Model(inputs, output)
 
-stream_addr = 'rtmp://192.168.1.6/live/test'
+stream_addr = 'rtmp://192.168.1.5/live/test'
 cap = cv2.VideoCapture(stream_addr)
 print(cap.isOpened())
 
-width = 640
-height = 480
+width = 2048
+height = 1152
 fps = 30.
 
 last_frame = np.zeros((height, width, 3))
@@ -61,13 +62,16 @@ def foreground():
         sr = ((sr + 1) / 2.) * 255
 
         # Save the results:
-        cv2.imwrite(os.path.join(output_dir, str(num) + '.png'), sr)
+        # cv2.imwrite(os.path.join(output_dir, str(num) + '.png'), sr)
+        last_frame = sr
         num += 1
         q.task_done()
 
 
 b = threading.Thread(name='background', target=background)
 f = threading.Thread(name='foreground', target=foreground)
+t = threading.Thread(name='twitch', target=twitch_stream)
 
 b.start()
 f.start()
+t.start()
