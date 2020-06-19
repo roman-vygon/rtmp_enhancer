@@ -1,11 +1,10 @@
-import os
 import queue
 import threading
-import matplotlib.pyplot as plt
 import cv2
-import numpy as np
+from enhancer import Enhancer
+
 from tensorflow import keras
-from twitchstream.outputvideo import TwitchBufferedOutputStream
+
 
 from stream import Streamer
 
@@ -25,13 +24,14 @@ height = 128 * 4
 fps = 30.
 
 stream = Streamer(height, width, fps)
+enhancer = Enhancer()
 
 
 def background():
     while True:
         ret, frame = cap.read()
         if frame is not None:
-            #im_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # im_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             q.put(frame)
     cap.release()
 
@@ -40,11 +40,9 @@ def foreground():
     while True:
         frame = q.get()
         frame = frame / 255.0
-        sr = model.predict(np.expand_dims(frame, axis=0))[0]
+        sr = enhancer.enhance(frame)
 
-        sr = (sr + 1) / 2.
-
-        #if stream.get_video_frame_buffer_state() < fps:
+        # if stream.get_video_frame_buffer_state() < fps:
         stream.send_video_frame(sr, frame_counter=None)
         q.task_done()
 
