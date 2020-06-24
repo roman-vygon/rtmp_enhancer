@@ -22,11 +22,12 @@ class Streamer:
             '-y',  # overwrite previous file/stream
             '-analyzeduration', '1',
             '-f', 'rawvideo',
+
             '-r', '%d' % self.fps,  # set a fixed frame rate
             '-vcodec', 'rawvideo',
             # size of one frame
             '-s', '%dx%d' % (self.width, self.height),
-            '-pix_fmt', 'bgr24',  # The input are raw bytes
+            '-pix_fmt', 'rgb24',  # The input are raw bytes
             '-thread_queue_size', '1024',
             '-i', '-',  # The input comes from a pipe
 
@@ -46,7 +47,7 @@ class Streamer:
             '-preset', 'faster', '-tune', 'zerolatency',
             '-crf', '23',
             '-pix_fmt', 'yuv420p',
-            #'-vf', 'negate',
+            '-vf', 'negate',
 
             '-minrate', '3000k', '-maxrate', '3000k',
             '-bufsize', '12000k',
@@ -120,7 +121,7 @@ class Streamer:
         if frame_counter is None:
             frame_counter = self.frame_counter
             self.frame_counter += 1
-
+        #print(self.q_video.qsize())
         self.q_video.put((frame_counter, frame))
 
     def _send_video_frame(self):
@@ -131,15 +132,19 @@ class Streamer:
             # frame[1] is the frame
             frame = frame[1]
         except IndexError:
+            #print('AGA1')
             frame = self.last_frame
         except queue.Empty:
+            #print('AGA2')
             frame = self.last_frame
         else:
+            #print('OK')
             self.last_frame = frame
 
         try:
             self.do_send_video_frame(frame)
         except OSError:
+            print('WTF')
             # stream has been closed.
             # This function is still called once when that happens.
             # Don't call this function again and everything should be
@@ -189,7 +194,7 @@ class RepeatStreamer:
             '-vcodec', 'rawvideo',
             # size of one frame
             '-s', '%dx%d' % (self.width, self.height),
-            '-pix_fmt', 'bgr24',  # The input are raw bytes
+            #'-pix_fmt', 'rgb32',  # The input are raw bytes
             '-thread_queue_size', '1024',
             '-i', '-',  # The input comes from a pipe
 
@@ -208,7 +213,7 @@ class RepeatStreamer:
             '-s', '%dx%d' % (self.width, self.height),
             '-preset', 'faster', '-tune', 'zerolatency',
             '-crf', '23',
-            '-pix_fmt', 'yuv420p',
+            #'-pix_fmt', 'yuv420p',
             '-vf', 'negate',
 
             '-minrate', '3000k', '-maxrate', '3000k',
