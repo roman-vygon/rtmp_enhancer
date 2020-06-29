@@ -22,8 +22,8 @@ while True:
         break
     else:
         time.sleep(0.3)
-width = 480 * 3
-height = 480 * 3
+width = 1280
+height = 720
 fps = 30.
 
 stream = Streamer(height, width, fps)
@@ -44,6 +44,7 @@ def foreground():
         print(q.qsize())
         frame = q.get()
         # frame = frame / 255.0
+        print(stream.get_video_frame_buffer_state())
         if stream.get_video_frame_buffer_state() < fps:
             sr = enhancer.enhance(frame)
             stream.send_video_frame(sr, frame_counter=None)

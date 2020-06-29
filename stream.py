@@ -27,7 +27,7 @@ class Streamer:
             '-vcodec', 'rawvideo',
             # size of one frame
             '-s', '%dx%d' % (self.width, self.height),
-            '-pix_fmt', 'rgb24',  # The input are raw bytes
+            '-pix_fmt', 'bgr24',  # The input are raw bytes
             '-thread_queue_size', '1024',
             '-i', '-',  # The input comes from a pipe
 
@@ -45,14 +45,14 @@ class Streamer:
             '-b:v', '3000k',
             '-s', '%dx%d' % (self.width, self.height),
             '-preset', 'faster', '-tune', 'zerolatency',
-            '-crf', '23',
+            '-crf', '17',
             '-pix_fmt', 'yuv420p',
-            '-vf', 'negate',
+            #'-vf', 'negate',
 
             '-minrate', '3000k', '-maxrate', '3000k',
             '-bufsize', '12000k',
             '-g', '60',  # key frame distance
-            '-keyint_min', '1',
+            '-keyint_min', '25',
 
             # AUDIO CODEC PARAMETERS
             '-acodec', 'libmp3lame', '-ar', '44100', '-b:a', '160k',
@@ -99,7 +99,7 @@ class Streamer:
         """
         assert frame.shape == (self.height, self.width, 3)
 
-        frame = np.clip(255 * frame, 0, 255).astype('uint8')
+        #frame = np.clip(255 * frame, 0, 255).astype('uint8')
         try:
             self.proc.stdin.write(frame.tostring())
         except OSError:
