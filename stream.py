@@ -10,7 +10,9 @@ class Streamer:
     def __init__(self, height, width, fps):
         self.ffmpeg = 'FFMPEG'
         self.dimension = '{}x{}'.format(width, height)
-        self.twitch_stream_key = 'live_151094258_mOH5qXYKHsj6PqrTazKFAiCboLUnKn'
+        f = open('STREAMKEY', 'r')        
+        self.twitch_stream_key = f.read()
+        f.close()
         self.fps = fps
 
         self.height = height
