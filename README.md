@@ -13,10 +13,11 @@ Code was tested with:
 You can install numpy and opencv with pip, and for pytorch installations visit https://pytorch.org/get-started/locally/
 
 FFMPEG is used for restreaming
-# Windows, MacOS
+
+### Windows, MacOS
 You can find an installer here https://ffmpeg.zeranoe.com/builds/ (Windows, MacOS)
 
-# Unix
+### Unix
 ```
 sudo apt install ffmpeg
 ```
