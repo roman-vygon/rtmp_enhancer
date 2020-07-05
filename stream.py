@@ -5,6 +5,8 @@ import numpy as np
 import queue
 import threading
 
+import sys
+
 
 class Streamer:
     def __init__(self, height, width, fps):
@@ -35,8 +37,8 @@ class Streamer:
 
         ])
         command.extend([
-            '-ar', '8000',
-            '-ac', '1',
+            '-ar', '44100',
+            '-ac', '2',
             '-f', 's16le',
             '-i', 'http://www.hochmuth.com/mp3/Tchaikovsky_Nocturne__orch.mp3',
         ])
@@ -59,7 +61,8 @@ class Streamer:
             # AUDIO CODEC PARAMETERS
             '-acodec', 'libmp3lame', '-ar', '44100', '-b:a', '160k',
             # '-bufsize', '8192k',
-            '-ac', '1',
+            '-ac', '2',
+
             '-map', '0:v', '-map', '1:a',
 
             '-threads', '2',
@@ -176,6 +179,8 @@ class Streamer:
         self.proc.wait()
 
 
+"""
+
 class RepeatStreamer:
     def __init__(self, height, width, fps):
         self.ffmpeg = 'FFMPEG'
@@ -202,9 +207,10 @@ class RepeatStreamer:
 
         ])
         command.extend([
-            '-ar', '8000',
-            '-ac', '1',
-            '-f', 's16le',
+
+            '-ar', '44100',
+            '-ac', '2',
+            #'-f', 's16le',
             '-i', 'http://www.hochmuth.com/mp3/Tchaikovsky_Nocturne__orch.mp3',
         ])
         command.extend([
@@ -224,10 +230,13 @@ class RepeatStreamer:
             '-keyint_min', '1',
 
             # AUDIO CODEC PARAMETERS
-            '-acodec', 'libmp3lame', '-ar', '44100', '-b:a', '160k',
+            '-acodec', 'libmp3lame',
+            '-ar', '44100',
+            '-b:a', '160k',
             # '-bufsize', '8192k',
-            '-ac', '1',
-            '-map', '0:v', '-map', '1:a',
+            '-ac', '2',
+            '-map', '0:v',
+            #'-map', '1:a',
 
             '-threads', '2',
             # STREAM TO TWITCH
@@ -264,15 +273,16 @@ class RepeatStreamer:
                             self._send_last_video_frame).start()
 
     def send_video_frame(self, frame):
-        """Send frame of shape (height, width, 3)
+        "Send frame of shape (height, width, 3)
         with values between 0 and 1.
         :param frame: array containing the frame.
         :type frame: numpy array with shape (height, width, 3)
             containing values between 0.0 and 1.0
-        """
+       "
         self.lastframe = frame
 
     def __exit__(self):
         self.proc.stdin.close()
         self.proc.stderr.close()
         self.proc.wait()
+    """

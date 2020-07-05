@@ -48,13 +48,11 @@ def convert_ycbcr_to_rgb(img, dim_order='hwc'):
     return torch.stack([r, g, b]).permute([1, 2, 0])
 
 
-def preprocess(img, device):
-    # img = np.array(img).astype(np.float32)
+def preprocess(img):
     ycbcr = convert_rgb_to_ycbcr(img)
     x = ycbcr[..., 0]
     x /= 255.
-    # x = torch.from_numpy(x).to(device)
-    x = torch.unsqueeze(torch.unsqueeze(x, 0), 0)  # .unsqueeze(0).unsqueeze(0)
+    x = torch.unsqueeze(x, 0)
     return x, ycbcr
 
 
