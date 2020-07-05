@@ -25,6 +25,7 @@ sudo apt install ffmpeg
 ## Authors
 
 * **Roman Vygon** 
+Correspondence to <roman.vygon@gmail.com>
 
 ## License
 
